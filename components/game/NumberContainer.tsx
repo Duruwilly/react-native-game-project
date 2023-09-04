@@ -23,8 +23,8 @@ const style = StyleSheet.create({
     },
     numberText: {
         color: Colors.accent500,
-        // fontFamily: "open-sans-bold", 
-        fontWeight: "bold",
+        fontFamily: "open-sans-bold",
+        // fontWeight: "bold",
         fontSize: 36
     }
 })
