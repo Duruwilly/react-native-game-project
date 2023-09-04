@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native"
+import { Image, StyleSheet, Text, View, useWindowDimensions, ScrollView } from "react-native"
 import PrimaryButtons from "../components/ui/PrimaryButtons"
 import Title from "../components/ui/Title"
 import { Colors } from "../constants/colors"
@@ -10,23 +10,52 @@ type propsType = {
 }
 
 const GameOver = ({ roundsNumber, userNumber, onStartNewGame }: propsType) => {
+
+  const { width, height } = useWindowDimensions()
+
+  let imageSize = 350
+
+  let borderRadius = 200
+
+  if (width < 380) {
+    imageSize = 175
+  }
+
+  if (height < 380) {
+    imageSize = 175
+  }
+
+  if (width < 380) {
+    borderRadius = 112
+  }
+
+  const imageStyle = {
+    height: imageSize,
+    width: imageSize,
+    borderRadius: borderRadius
+  }
+
   return (
-    <View style={styles.rootContainer}>
-      <Title title="GAME OVER" />
-      <View style={styles.imageContainer}>
-        <Image style={styles.image} source={require("../assets/images/game-over.jpg")} />
+    <ScrollView style={{ flex: 1 }}>
+      <View style={styles.rootContainer}>
+        <Title title="GAME OVER" />
+        <View style={[styles.imageContainer, imageStyle]}>
+          <Image style={styles.image} source={require("../assets/images/game-over.jpg")} />
+        </View>
+        <Text style={styles.summaryText}>
+          Your phone needed
+          <Text style={styles.highlight}>{roundsNumber}</Text>
+          rounds to guess the numbe <Text style={styles.highlight}>{userNumber}</Text>
+        </Text>
+        <PrimaryButtons onPress={onStartNewGame}>Restart</PrimaryButtons>
       </View>
-      <Text style={styles.summaryText}>
-        Your phone needed
-        <Text style={styles.highlight}>{roundsNumber}</Text>
-        rounds to guess the numbe <Text style={styles.highlight}>{userNumber}</Text>
-      </Text>
-      <PrimaryButtons onPress={onStartNewGame}>Restart</PrimaryButtons>
-    </View>
+    </ScrollView>
   )
 }
 
 export default GameOver
+
+// const deviceWidth = Dimensions.get("window").width
 
 const styles = StyleSheet.create({
   rootContainer: {
@@ -36,9 +65,9 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   imageContainer: {
-    width: 350,
-    height: 350,
-    borderRadius: 200,
+    // width: deviceWidth < 380 ? 175 : 350,
+    // height: deviceWidth < 380 ? 175 : 350,
+    // borderRadius: deviceWidth < 380 ? 112 : 200,
     borderWidth: 3,
     borderColor: Colors.primary800,
     overflow: "hidden",

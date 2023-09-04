@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Alert, Text, FlatList } from "react-native"
+import { View, StyleSheet, Alert, FlatList, useWindowDimensions } from "react-native"
 import NumberContainer from "../components/game/NumberContainer";
 import Card from "../components/ui/Card";
 import InstructionText from "../components/ui/instructionText";
@@ -42,6 +42,8 @@ const GameScreen = ({ userNumber, onGameOver }: { userNumber: number, onGameOver
         setGuessRounds((prevRounds) => [newRndNum, ...prevRounds])
     }
 
+    const { width, height } = useWindowDimensions();
+
     useEffect(() => {
         if (currentGuess === userNumber) {
             onGameOver()
@@ -55,25 +57,50 @@ const GameScreen = ({ userNumber, onGameOver }: { userNumber: number, onGameOver
 
     const guessRoundsListLength = guessRounds.length
 
-    return (
-        <View style={styles.screens}>
-            <Title title="Opponent's Game" />
-            <NumberContainer>{currentGuess}</NumberContainer>
-            <Card>
-                <InstructionText style={styles.instructionText}>Higher or Lower</InstructionText>
-                <View style={styles.buttonsContainer}>
+    let content = <>
+        <NumberContainer>{currentGuess}</NumberContainer>
+        <Card>
+            <InstructionText style={styles.instructionText}>Higher or Lower</InstructionText>
+            <View style={styles.buttonsContainer}>
+                <View style={styles.buttonContainer}>
+                    <PrimaryButtons onPress={nextGuestHandler.bind(this, "lower")}>
+                        <Ionicons name="md-remove" size={24} color="white" />
+                    </PrimaryButtons>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <PrimaryButtons onPress={nextGuestHandler.bind(this, "higher")}>
+                        <Ionicons name="md-add" size={24} color="white" />
+                    </PrimaryButtons>
+                </View>
+            </View>
+        </Card>
+    </>
+
+    // if we are already in landscape mode or a width bigger than 500 show a diff view
+    if (width > 500) {
+        content =
+            <>
+                {/* <InstructionText style={styles.instructionText}>Higher or Lower</InstructionText> */}
+                <View style={styles.buttonsContainerWide}>
                     <View style={styles.buttonContainer}>
                         <PrimaryButtons onPress={nextGuestHandler.bind(this, "lower")}>
                             <Ionicons name="md-remove" size={24} color="white" />
                         </PrimaryButtons>
                     </View>
+                    <NumberContainer>{currentGuess}</NumberContainer>
                     <View style={styles.buttonContainer}>
                         <PrimaryButtons onPress={nextGuestHandler.bind(this, "higher")}>
                             <Ionicons name="md-add" size={24} color="white" />
                         </PrimaryButtons>
                     </View>
                 </View>
-            </Card>
+            </>
+    }
+
+    return (
+        <View style={styles.screens}>
+            <Title title="Opponent's Game" />
+            {content}
             <View style={styles.listContainer}>
                 {/* {guessRounds.map(round => <Text key={round}>{round}</Text>)} */}
                 <FlatList data={guessRounds} renderItem={(itemData) => {
@@ -93,7 +120,8 @@ export default GameScreen
 const styles = StyleSheet.create({
     screens: {
         flex: 1,
-        padding: 24
+        padding: 24,
+        alignItems: "center"
     },
     instructionText: {
         marginBottom: 12,
@@ -107,5 +135,9 @@ const styles = StyleSheet.create({
     listContainer: {
         flex: 1,
         padding: 16
+    },
+    buttonsContainerWide: {
+        flexDirection: "row",
+        alignItems: "center"
     }
 })
